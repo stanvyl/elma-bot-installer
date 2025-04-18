@@ -24,6 +24,13 @@ sudo microk8s.enable ha-cluster
 sudo microk8s.enable metrics-server
 sudo microk8s.enable hostpath-storage
 
+echo "Установка K9s..."
+sudo snap install k9s
+sudo ln -s /snap/k9s/current/bin/k9s /snap/bin/
+
+echo "Копирование конфигурации kubectl..."
+microk8s kubectl config view --raw > "$HOME/.kube/config"
+
 # Проверка существования папок перед их созданием
 for dir in "/home/elmabot" "/home/certs"; do
   if [ ! -d "$dir" ]; then
@@ -69,13 +76,6 @@ sudo openssl x509 -req -in /etc/ssl/certs/selfsigned.csr -CA /etc/ssl/certs/root
 
 echo "Подписанный сертификат создан."
 
-echo "Установка K9s..."
-sudo snap install k9s
-sudo ln -s /snap/k9s/current/bin/k9s /snap/bin/
-
-echo "Копирование конфигурации kubectl..."
-microk8s kubectl config view --raw > "$HOME/.kube/config"
-
 echo "Создание секрета TLS в Kubernetes..."
 microk8s kubectl create secret tls my-tls-secret -n default \
   --key /etc/ssl/private/selfsigned.key \
@@ -87,7 +87,7 @@ echo "Создание ConfigMap для монтирования сертифи�
 microk8s kubectl create configmap elma-bot-root-ca --from-file=elma-bot-cert.crt=/etc/ssl/certs/selfsigned.crt
 
 echo "Скачивание чартов ELMA Bot..."
-CHARTS_URL="https://dl.elma365.com/extensions/elma-bot/master/1.9.1/elma-bot.tar.gz"
+CHARTS_URL="https://dl.elma365.com/extensions/elma-bot/latest/elma-bot.tar.gz"
 CHARTS_DIR="/home/elmabot"
 
 wget -O "$CHARTS_DIR/elma-bot.tar.gz" "$CHARTS_URL"
