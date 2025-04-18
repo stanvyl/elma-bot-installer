@@ -6,6 +6,11 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
+echo "Добавление алиасов для MicroK8s в ~/.bashrc..."
+echo "alias mk='microk8s kubectl'" >> ~/.bashrc
+echo "alias m='microk8s'" >> ~/.bashrc
+source ~/.bashrc
+
 echo "Установка MicroK8s..."
 sudo snap install microk8s --channel=1.21/stable --classic
 
@@ -130,10 +135,5 @@ while true; do
       ;;
   esac
 done
-
-echo "Добавление алиасов для MicroK8s в ~/.bashrc..."
-echo "alias mk='microk8s kubectl'" >> ~/.bashrc
-echo "alias m='microk8s'" >> ~/.bashrc
-source ~/.bashrc
 
 echo "Скрипт завершён."
